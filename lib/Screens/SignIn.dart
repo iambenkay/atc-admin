@@ -8,17 +8,16 @@ class SignIn extends StatelessWidget {
     return Stack(
       children: <Widget>[
         Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('Assets/image1.png'),
-                  fit: BoxFit.fitWidth,
-                  alignment: Alignment.topCenter)),
+          color: Color(0xffe29464),
         ),
         Container(
+          alignment: Alignment.center,
           width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.only(top: 270),
+          margin: EdgeInsets.only(top: 150),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(50),
+            ),
             color: Colors.white,
           ),
           child: Padding(
@@ -60,20 +59,21 @@ class SignIn extends StatelessWidget {
                         color: Colors.black, fontFamily: 'SFUIDisplay'),
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xffaa5577))
-                        ),
+                            borderSide: BorderSide(color: Color(0xffaa5577))),
                         labelText: 'Password',
                         prefixIcon: Icon(Icons.lock_outline),
                         labelStyle: TextStyle(fontSize: 15)),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 20),
+                  padding: EdgeInsets.only(top: 40),
                   child: MaterialButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => Admin(),
-                      ));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Admin(),
+                          ));
                     }, //since this is only a UI app
                     child: Text(
                       'SIGN IN',

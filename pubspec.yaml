@@ -18,7 +18,6 @@ environment:
 
 dependencies:
   font_awesome_flutter: ^8.5.0 #for facebook icon
-  flutter_svg: 0.17.1
   flutter:
     sdk: flutter
 
