@@ -5,7 +5,6 @@ class GreetingsHeader extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double offset, bool overlaps) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        print(offset);
         String _greetings = "Welcome, Benjamin!", _date = "24th February";
         return Card(
             margin: EdgeInsets.all(10),
@@ -25,7 +24,7 @@ class GreetingsHeader extends SliverPersistentHeaderDelegate {
                               _date,
                               style: TextStyle(
                                   fontFamily: "SFUIDisplay",
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
