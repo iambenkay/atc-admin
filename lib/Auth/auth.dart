@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-enum Status { Unauthenticated, Authenticated, Authenticating }
+enum Status { Uninitialized, Unauthenticated, Authenticated, Authenticating }
 
 class Auth with ChangeNotifier {
   Status status;
@@ -11,7 +11,7 @@ class Auth with ChangeNotifier {
   FirebaseUser user;
   Firestore store;
   Auth() {
-    status = Status.Unauthenticated;
+    status = Status.Uninitialized;
     _auth = FirebaseAuth.instance;
     store = Firestore.instance;
 
@@ -30,7 +30,7 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future signOut() {
+  Future<void> signOut() {
     _auth.signOut();
     status = Status.Unauthenticated;
     notifyListeners();
@@ -50,7 +50,6 @@ class Auth with ChangeNotifier {
 
 Auth firebase = Auth();
 
-Widget withFirebase(Widget w) {
-  return ChangeNotifierProvider.value(
-      value: firebase, child: Consumer(builder: (context, Auth auth, _) => w));
+Widget withFirebase(Consumer<Auth> w) {
+  return ChangeNotifierProvider.value(value: firebase, child: w);
 }

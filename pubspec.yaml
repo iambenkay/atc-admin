@@ -19,6 +19,8 @@ environment:
 dependencies:
   firebase_core: ^0.4.0+9
   firebase_auth: ^0.14.0+5
+  firebase_storage: ^3.1.1
+  google_fonts: ^0.3.9
   progress_indicators: ^0.1.4
   cloud_firestore: ^0.12.9+5
   font_awesome_flutter: ^8.5.0 #for facebook icon

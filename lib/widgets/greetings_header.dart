@@ -5,7 +5,23 @@ class GreetingsHeader extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double offset, bool overlaps) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        String _greetings = "Welcome, Benjamin!", _date = "24th February";
+        DateTime _dateTime = DateTime.now();
+        final months = <String>[
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December"
+        ];
+        String _greetings = "Welcome, Benjamin!",
+            _date = "${months[_dateTime.month - 1]}, ${_dateTime.day}";
         return Card(
             margin: EdgeInsets.all(10),
             shape:

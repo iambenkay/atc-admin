@@ -14,15 +14,17 @@ class ManagerHeader extends SliverPersistentHeaderDelegate {
               boxShadow: <BoxShadow>[
                 BoxShadow(
                     color: Color(0xffcccccc),
-                    blurRadius: 4,
-                    offset: Offset(0, 3))
+                    blurRadius: 2,
+                    offset: Offset(0, 1))
               ]),
           padding: EdgeInsets.only(left: 15),
           child: Row(
             children: <Widget>[
               InkWell(
                 child: Container(child: Icon(Icons.arrow_back)),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
               ),
               Padding(
                 padding: EdgeInsets.only(left: 15),

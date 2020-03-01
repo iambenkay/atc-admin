@@ -11,14 +11,15 @@ class Home extends StatelessWidget {
     return ChangeNotifierProvider.value(
       value: firebase,
       child: Consumer(builder: (context, Auth auth, _) {
-        switch(auth.status){
+        switch (auth.status) {
+          case Status.Uninitialized:
+            return Scaffold();
           case Status.Unauthenticated:
           case Status.Authenticating:
             return SignIn();
           case Status.Authenticated:
           default:
-            return Admin();
-
+            return Admin(auth);
         }
       }),
     );

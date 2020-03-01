@@ -1,6 +1,5 @@
 import 'package:atc_admin/Auth/auth.dart';
 import 'package:atc_admin/Screens/ArticleManager.dart';
-import 'package:atc_admin/widgets/appbar.dart';
 import 'package:atc_admin/widgets/drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -9,49 +8,83 @@ import 'package:provider/provider.dart';
 import '../widgets/greetings_header.dart';
 
 class Admin extends StatefulWidget {
+  final auth;
+  Admin(this.auth);
   @override
-  _AdminState createState() => _AdminState();
+  _AdminState createState() => _AdminState(auth);
 }
 
 class _AdminState extends State<Admin> {
-  GlobalKey<ScaffoldState> _scaffold = GlobalKey();
-  var _channels, _articles, _shop, _events, _ready = false;
   Auth auth;
+  _AdminState(this.auth);
+  GlobalKey<ScaffoldState> _scaffold = GlobalKey();
+  var _channels, _articles, _shop, _events;
 
-  void fetchCount() async {
-    int _c = await auth.store
+  void fetchCount() {
+    auth.store
         .collection("charmainetv")
-        .getDocuments()
-        .then((QuerySnapshot snapshot) => snapshot.documents.length);
-    int _a = await auth.store
-        .collection("article")
-        .getDocuments()
-        .then((QuerySnapshot snapshot) => snapshot.documents.length);
-    int _s = await auth.store
-        .collection("shop")
-        .getDocuments()
-        .then((QuerySnapshot snapshot) => snapshot.documents.length);
-    int _e = await auth.store
-        .collection("event")
-        .getDocuments()
-        .then((QuerySnapshot snapshot) => snapshot.documents.length);
-
-    setState(() {
-      _channels = _c;
-      _articles = _a;
-      _shop = _s;
-      _events = _e;
-      _ready = true;
+        .snapshots()
+        .listen((QuerySnapshot snapshot) {
+      setState(() {
+        _channels = snapshot.documents.length;
+      });
     });
+    auth.store
+        .collection("article")
+        .snapshots()
+        .listen((QuerySnapshot snapshot) {
+      setState(() {
+        _articles = snapshot.documents.length;
+      });
+    });
+    auth.store.collection("shop").snapshots().listen((QuerySnapshot snapshot) {
+      setState(() {
+        _shop = snapshot.documents.length;
+      });
+    });
+    auth.store.collection("event").snapshots().listen((QuerySnapshot snapshot) {
+      setState(() {
+        _events = snapshot.documents.length;
+      });
+    });
+  }
+
+  void initState() {
+    super.initState();
+    fetchCount();
   }
 
   @override
   Widget build(BuildContext context) {
-    auth = Provider.of<Auth>(context);
-    fetchCount();
+    var _ready = _articles == null ||
+            _channels == null ||
+            _shop == null ||
+            _events == null
+        ? false
+        : true;
     return Scaffold(
         key: _scaffold,
-        appBar: CustomAppBar(),
+        appBar: AppBar(
+          elevation: 0,
+          title: Text(
+            "Charmaine",
+            style: TextStyle(
+                color: Colors.white, fontFamily: "SFUIDisplay", fontSize: 25),
+          ),
+          centerTitle: true,
+          backgroundColor: Color(0xffe29464),
+          leading: InkWell(
+            onTap: () {
+              _scaffold.currentState.openDrawer();
+            },
+            child: Image.asset(
+              "Assets/hamb-menu.png",
+              height: 50,
+              width: 50,
+              color: Color(0xffffffff),
+            ),
+          ),
+        ),
         resizeToAvoidBottomInset: true,
         drawer: CustomDrawer(),
         body: Container(
@@ -100,8 +133,11 @@ class _AdminState extends State<Admin> {
                                 details: "$_articles posts",
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (_) =>
-                                          withFirebase(ArticleManager())));
+                                      builder: (_) => withFirebase(
+                                          Consumer<Auth>(
+                                              builder:
+                                                  (context, Auth auth, _) =>
+                                                      ArticleManager(auth)))));
                                 },
                               ),
                               AdminItem(
