@@ -178,7 +178,7 @@ class _ArticleEditorState extends State<ArticleEditor>
                       Padding(
                           padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
                           child: Text(
-                            "Created on ${months[dateCreated.month - 1]}, ${dateCreated.day} ${dateCreated.year}",
+                            "Created on ${months[dateCreated.month - 1]} ${dateCreated.day}, ${dateCreated.year}",
                             style: GoogleFonts.lato(
                               fontSize: 18,
                               fontStyle: FontStyle.italic,

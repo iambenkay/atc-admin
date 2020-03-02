@@ -1,5 +1,5 @@
 import 'package:atc_admin/Auth/auth.dart';
-import 'package:atc_admin/Screens/ArticleEditor.dart';
+import 'package:atc_admin/Screens/Processing.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -36,16 +36,14 @@ class _CreateArticleState extends State<CreateArticle> {
                     builder: (context, Auth auth, _) => FlatButton(
                           onPressed: _title.text.isEmpty
                               ? null
-                              : () async {
-                                  final id = await auth.store
-                                      .collection("article")
-                                      .add({
-                                    "title": _title.text,
-                                    "createdAt": DateTime.now(),
-                                  }).then((ref) => ref.documentID);
+                              : () {
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(
-                                          builder: (context) => ArticleEditor(id, auth) ));
+                                          builder: (context) =>
+                                              Processing(auth, {
+                                                "title": _title.text,
+                                                "createdAt": DateTime.now(),
+                                              })));
                                 },
                           textColor: Color(0xffe29464),
                           shape: RoundedRectangleBorder(

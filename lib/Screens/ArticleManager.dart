@@ -134,13 +134,13 @@ class _ArticleManagerState extends State<ArticleManager> {
                                 child: PopupMenuButton<ContextOption>(
                                   itemBuilder: (context) {
                                     return ([
-                                      ContextMenuItem(ContextOption.Edit,
+                                      contextMenuItem(ContextOption.Edit,
                                           Icons.edit, "Edit"),
-                                      ContextMenuItem(ContextOption.Publish,
+                                      contextMenuItem(ContextOption.Publish,
                                           Icons.cloud_upload, "Publish"),
-                                      ContextMenuItem(ContextOption.Stats,
+                                      contextMenuItem(ContextOption.Stats,
                                           Icons.show_chart, "View stats"),
-                                      ContextMenuItem(ContextOption.Delete,
+                                      contextMenuItem(ContextOption.Delete,
                                           Icons.delete, "Delete"),
                                     ]);
                                   },
@@ -182,7 +182,7 @@ class _ArticleManagerState extends State<ArticleManager> {
   }
 }
 
-PopupMenuItem<ContextOption> ContextMenuItem(
+PopupMenuItem<ContextOption> contextMenuItem(
         ContextOption value, IconData icon, String choice) =>
     PopupMenuItem<ContextOption>(
         value: value,
