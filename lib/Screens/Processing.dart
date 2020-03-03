@@ -47,7 +47,7 @@ class _ProcessingState extends State<Processing> {
           child: !_saved
               ? CircularProgressIndicator()
               : Icon(
-                  Icons.check_box,
+                  Icons.check,
                   size: 80,
                   color: Color(0xff008800),
                 )),
