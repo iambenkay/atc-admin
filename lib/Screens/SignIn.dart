@@ -61,7 +61,6 @@ class _SignInState extends State<SignIn> {
                         child: Text('ADMIN',
                             style: TextStyle(
                               color: Colors.black,
-                              fontFamily: 'SFUIDisplay',
                               fontWeight: FontWeight.bold,
                               fontSize: 30,
                             )),
@@ -76,7 +75,7 @@ class _SignInState extends State<SignIn> {
                           validator: (value) =>
                               (value.isEmpty) ? "Please enter email" : null,
                           style: TextStyle(
-                              color: Colors.black, fontFamily: 'SFUIDisplay'),
+                              color: Colors.black),
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Email address',
@@ -93,7 +92,7 @@ class _SignInState extends State<SignIn> {
                             (value.isEmpty) ? "Please enter password" : null,
                         obscureText: true,
                         style: TextStyle(
-                            color: Colors.black, fontFamily: 'SFUIDisplay'),
+                            color: Colors.black),
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
                                 borderSide: BorderSide(color: Color(0xffaa5577))),
@@ -120,7 +119,6 @@ class _SignInState extends State<SignIn> {
                                           err.message,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              fontFamily: 'SFUIDisplay',
                                               fontSize: 15),
                                         )));
                                   }
@@ -130,7 +128,6 @@ class _SignInState extends State<SignIn> {
                                 'SIGN IN',
                                 style: TextStyle(
                                   fontSize: 15,
-                                  fontFamily: 'SFUIDisplay',
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

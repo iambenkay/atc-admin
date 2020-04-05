@@ -1,5 +1,7 @@
 import 'package:atc_admin/Auth/auth.dart';
 import 'package:atc_admin/Screens/ArticleManager.dart';
+import 'package:atc_admin/Screens/TvManager.dart';
+import 'package:atc_admin/services/asset-provider.dart';
 import 'package:atc_admin/widgets/drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -68,8 +70,7 @@ class _AdminState extends State<Admin> {
           elevation: 0,
           title: Text(
             "Charmaine",
-            style: TextStyle(
-                color: Colors.white, fontFamily: "SFUIDisplay", fontSize: 25),
+            style: TextStyle(color: Colors.white, fontSize: 25),
           ),
           centerTitle: true,
           backgroundColor: Color(0xffe29464),
@@ -78,7 +79,7 @@ class _AdminState extends State<Admin> {
               _scaffold.currentState.openDrawer();
             },
             child: Image.asset(
-              "Assets/hamb-menu.png",
+              AssetProvider.hamb_menu,
               height: 50,
               width: 50,
               color: Color(0xffffffff),
@@ -91,7 +92,7 @@ class _AdminState extends State<Admin> {
             constraints: BoxConstraints.expand(),
             decoration: BoxDecoration(
                 image: DecorationImage(
-              image: AssetImage("Assets/admin-bg.png"),
+              image: AssetImage(AssetProvider.admin_bg),
               fit: BoxFit.cover,
             )),
             child: Container(
@@ -120,15 +121,18 @@ class _AdminState extends State<Admin> {
                           delegate: SliverChildListDelegate(
                             <Widget>[
                               AdminItem(
-                                color: 0xff446688,
                                 item: "Charmaine TV",
                                 details: "$_channels channels",
                                 onTap: () {
-                                  print("Pressed");
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) =>
+                                          withFirebase(Consumer<Auth>(
+                                            builder: (context, Auth auth, _) =>
+                                                TvManager(auth),
+                                          ))));
                                 },
                               ),
                               AdminItem(
-                                color: 0xff886644,
                                 item: "Charmaine Articles",
                                 details: "$_articles posts",
                                 onTap: () {
@@ -141,12 +145,10 @@ class _AdminState extends State<Admin> {
                                 },
                               ),
                               AdminItem(
-                                color: 0xff664488,
                                 item: "Charmaine Shop",
                                 details: "$_shop products",
                               ),
                               AdminItem(
-                                color: 0xff448866,
                                 item: "Charmaine Events",
                                 details: "$_events events",
                               ),
@@ -162,14 +164,13 @@ class _AdminState extends State<Admin> {
 class AdminItem extends StatelessWidget {
   final String item, details;
   final Function onTap;
-  final int color;
-  const AdminItem({Key key, this.item, this.details, this.color, this.onTap})
+  const AdminItem({Key key, this.item, this.details, this.onTap})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Color(color),
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -185,17 +186,14 @@ class AdminItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Text(item,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontFamily: "SFUIDisplay",
-                        fontWeight: FontWeight.bold)),
+                    style:
+                        TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                 Text(
                   details,
                   style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontFamily: "SFUIDisplay"),
+                    color: Color(0xff555555),
+                    fontSize: 20,
+                  ),
                 )
               ],
             ),

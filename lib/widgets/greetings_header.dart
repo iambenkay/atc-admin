@@ -1,3 +1,4 @@
+import 'package:atc_admin/services/asset-provider.dart';
 import 'package:flutter/material.dart';
 
 class GreetingsHeader extends SliverPersistentHeaderDelegate {
@@ -39,7 +40,6 @@ class GreetingsHeader extends SliverPersistentHeaderDelegate {
                             child: Text(
                               _date,
                               style: TextStyle(
-                                  fontFamily: "SFUIDisplay",
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -50,7 +50,7 @@ class GreetingsHeader extends SliverPersistentHeaderDelegate {
                               child: CircleAvatar(
                                 backgroundColor: Colors.black,
                                 backgroundImage:
-                                    AssetImage("Assets/avatar.png"),
+                                    AssetImage(AssetProvider.avatar),
                                 radius: 20,
                               ),
                             ),
@@ -64,8 +64,7 @@ class GreetingsHeader extends SliverPersistentHeaderDelegate {
                         padding: EdgeInsets.only(left: 20, bottom: 10),
                         child: Text(
                           _greetings,
-                          style: TextStyle(
-                              fontFamily: 'SFUIDisplay', fontSize: 28),
+                          style: TextStyle(fontSize: 28),
                         ),
                       ),
                     ),

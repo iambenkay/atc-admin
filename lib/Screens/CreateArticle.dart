@@ -1,7 +1,7 @@
 import 'package:atc_admin/Auth/auth.dart';
+import 'package:atc_admin/Screens/ArticleEditor.dart';
 import 'package:atc_admin/Screens/Processing.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class CreateArticle extends StatefulWidget {
@@ -40,9 +40,14 @@ class _CreateArticleState extends State<CreateArticle> {
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              Processing(auth, {
-                                                "title": _title.text,
-                                                "createdAt": DateTime.now(),
+                                              Processing(auth, () async {
+                                                return await auth.store
+                                                    .collection("article")
+                                                    .add({
+                                                  "title": _title.text,
+                                                  "createdAt": DateTime.now(),
+                                                }).then((ref) =>
+                                                        ArticleEditor(ref.documentID, auth));
                                               })));
                                 },
                           textColor: Color(0xffe29464),
@@ -50,7 +55,7 @@ class _CreateArticleState extends State<CreateArticle> {
                               borderRadius: BorderRadius.circular(10)),
                           child: Text(
                             "CREATE",
-                            style: GoogleFonts.lato(
+                            style: TextStyle(
                               fontSize: 20,
                             ),
                           ),
@@ -72,12 +77,10 @@ class _CreateArticleState extends State<CreateArticle> {
               padding: const EdgeInsets.fromLTRB(20, 15, 10, 20),
               child: Text(
                 "Create a new\nArticle",
-                style: GoogleFonts.lato(
-                  textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 35,
-                    fontWeight: FontWeight.w900,
-                  ),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 35,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
@@ -92,7 +95,7 @@ class _CreateArticleState extends State<CreateArticle> {
                 controller: _title,
                 validator: (value) =>
                     (value.isEmpty) ? "Please enter title" : null,
-                style: GoogleFonts.lato(
+                style: TextStyle(
                     color: Colors.black,
                     fontSize: 30,
                     fontWeight: FontWeight.w300),
@@ -101,7 +104,7 @@ class _CreateArticleState extends State<CreateArticle> {
                       borderSide: BorderSide.none,
                     ),
                     labelText: 'Title',
-                    labelStyle: GoogleFonts.lato(fontSize: 30)),
+                    labelStyle: TextStyle(fontSize: 30)),
               ),
             ),
           ],

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:atc_admin/Auth/auth.dart';
 import 'package:atc_admin/Screens/ArticleEditor.dart';
 import 'package:atc_admin/Screens/CreateArticle.dart';
@@ -10,28 +12,32 @@ class ArticleManager extends StatefulWidget {
   final auth;
   ArticleManager(this.auth);
   @override
-  _ArticleManagerState createState() => _ArticleManagerState(auth);
+  _ArticleManagerState createState() => _ArticleManagerState();
 }
 
 class _ArticleManagerState extends State<ArticleManager> {
-  Auth auth;
-  _ArticleManagerState(this.auth);
+  _ArticleManagerState();
+  StreamSubscription<QuerySnapshot> subscription;
   GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
-  List<DocumentSnapshot> _articles;
+  List<DocumentSnapshot> _articles = [];
   void fetchArticles() {
-    auth.store
+   subscription = widget.auth.store
         .collection("article")
         .snapshots()
         .listen((QuerySnapshot snapshot) {
-          snapshot.documents.sort(
-              (a, b) => b.data["createdAt"].compareTo(a.data["createdAt"]));
+      snapshot.documents
+          .sort((a, b) => b.data["createdAt"].compareTo(a.data["createdAt"]));
 
-          setState(() {
-            _articles = snapshot.documents;
-          });
-        });
+      setState(() {
+        _articles = snapshot.documents;
+      });
+    });
   }
-
+  @override
+  void dispose(){
+    subscription.cancel();
+    super.dispose();
+  }
   @override
   void initState() {
     super.initState();
@@ -41,144 +47,163 @@ class _ArticleManagerState extends State<ArticleManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffold,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => CreateArticle()));
-        },
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
-      appBar: AppBar(
-        elevation: 1,
-        title: Text(
-          "Articles",
-          style: TextStyle(
-              color: Colors.black,
-              fontFamily: "SFUIDisplay",
-              fontSize: 32,
-              fontWeight: FontWeight.w900),
-        ),
-        backgroundColor: Color(0xffffffff),
-        leading: InkWell(
-          onTap: () {
-            Navigator.of(context).pop();
+        key: _scaffold,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => CreateArticle()));
           },
-          child: Icon(Icons.arrow_back),
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
         ),
-      ),
-      body: CustomScrollView(
-        physics: BouncingScrollPhysics(),
-        slivers: <Widget>[
-          _articles == null
-              ? SliverFillRemaining(
-                  child: JumpingDotsProgressIndicator(
-                    color: Color(0xffe29464),
-                    fontSize: 70.0,
-                    dotSpacing: 7,
-                    numberOfDots: 4,
-                  ),
-                )
-              : SliverPadding(
-                  padding: EdgeInsets.only(bottom: 50),
-                  sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                    var article = _articles[index].data;
-                    article["id"] = _articles[index].documentID;
-
-                    return Card(
-                        child: Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 8,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 8.0, 0, 8.0),
-                                  child: Text(article["title"],
-                                      style: TextStyle(
-                                          fontFamily: "SFUIDisplay",
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                article["description"] == null || article["description"] == ""
-                                    ? Text("No content yet",
-                                        style: TextStyle(
-                                          fontFamily: "SFUIDisplay",
-                                          fontSize: 17,
-                                          fontStyle: FontStyle.italic,
-                                        ))
-                                    : Text(
-                                        article["description"].length > 150 ? article["description"]
-                                                .substring(0, 150) +
-                                            "..." : article["description"],
-                                        style: TextStyle(
-                                          fontFamily: "SFUIDisplay",
-                                          fontSize: 17,
-                                        )),
-                              ],
-                            ),
+        appBar: AppBar(
+          elevation: 1,
+          title: Text(
+            "Articles",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 32,
+            ),
+          ),
+          backgroundColor: Color(0xffffffff),
+          leading: InkWell(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Icon(Icons.arrow_back),
+          ),
+        ),
+        body: _articles.length > 0
+            ? CustomScrollView(
+                physics: BouncingScrollPhysics(),
+                slivers: <Widget>[
+                  _articles == null
+                      ? SliverFillRemaining(
+                          child: JumpingDotsProgressIndicator(
+                            color: Color(0xffe29464),
+                            fontSize: 70.0,
+                            dotSpacing: 7,
+                            numberOfDots: 4,
                           ),
-                          Expanded(
-                              flex: 1,
-                              child: Container(
-                                alignment: Alignment.bottomCenter,
-                                child: PopupMenuButton<ContextOption>(
-                                  itemBuilder: (context) {
-                                    return ([
-                                      contextMenuItem(ContextOption.Edit,
-                                          Icons.edit, "Edit"),
-                                      contextMenuItem(ContextOption.Publish,
-                                          Icons.cloud_upload, "Publish"),
-                                      contextMenuItem(ContextOption.Stats,
-                                          Icons.show_chart, "View stats"),
-                                      contextMenuItem(ContextOption.Delete,
-                                          Icons.delete, "Delete"),
-                                    ]);
-                                  },
-                                  onSelected: (ContextOption value) {
-                                    switch (value) {
-                                      case ContextOption.Edit:
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    withFirebase(Consumer(
-                                                        builder: (context,
-                                                                Auth auth, _) =>
-                                                            ArticleEditor(
-                                                                article["id"],
-                                                                auth)))));
-                                        break;
-                                      case ContextOption.Stats:
-                                        break;
-                                      case ContextOption.Delete:
-                                        auth.store
-                                            .collection("article")
-                                            .document(article["id"])
-                                            .delete();
-                                        break;
-                                      default:
-                                        break;
-                                    }
-                                  },
-                                ),
-                              )),
-                        ],
-                      ),
-                    ));
-                  }, childCount: _articles.length, semanticIndexOffset: 1)),
-                ),
-        ],
-      ),
-    );
+                        )
+                      : SliverPadding(
+                          padding: EdgeInsets.only(bottom: 50),
+                          sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                  (BuildContext context, int index) {
+                            var article = _articles[index].data;
+                            article["id"] = _articles[index].documentID;
+
+                            return Card(
+                                child: Container(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 8,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 8.0, 0, 8.0),
+                                          child: Text(article["title"],
+                                              style: TextStyle(
+                                                  fontSize: 23,
+                                                  fontWeight: FontWeight.bold)),
+                                        ),
+                                        article["description"] == null ||
+                                                article["description"] == ""
+                                            ? Text("No content yet",
+                                                style: TextStyle(
+                                                  fontFamily: "SFUIDisplay",
+                                                  fontSize: 17,
+                                                  fontStyle: FontStyle.italic,
+                                                ))
+                                            : Text(
+                                                article["description"].length >
+                                                        150
+                                                    ? article["description"]
+                                                            .substring(0, 150) +
+                                                        "..."
+                                                    : article["description"],
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                )),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                      flex: 1,
+                                      child: Container(
+                                        alignment: Alignment.bottomCenter,
+                                        child: PopupMenuButton<ContextOption>(
+                                          itemBuilder: (context) {
+                                            return ([
+                                              contextMenuItem(
+                                                  ContextOption.Edit,
+                                                  Icons.edit,
+                                                  "Edit"),
+                                              contextMenuItem(
+                                                  ContextOption.Publish,
+                                                  Icons.cloud_upload,
+                                                  "Publish"),
+                                              contextMenuItem(
+                                                  ContextOption.Stats,
+                                                  Icons.show_chart,
+                                                  "View stats"),
+                                              contextMenuItem(
+                                                  ContextOption.Delete,
+                                                  Icons.delete,
+                                                  "Delete"),
+                                            ]);
+                                          },
+                                          onSelected: (ContextOption value) {
+                                            switch (value) {
+                                              case ContextOption.Edit:
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            withFirebase(Consumer(
+                                                                builder: (context,
+                                                                        Auth
+                                                                            auth,
+                                                                        _) =>
+                                                                    ArticleEditor(
+                                                                        article[
+                                                                            "id"],
+                                                                        auth)))));
+                                                break;
+                                              case ContextOption.Stats:
+                                                break;
+                                              case ContextOption.Delete:
+                                                widget.auth.store
+                                                    .collection("article")
+                                                    .document(article["id"])
+                                                    .delete();
+                                                break;
+                                              default:
+                                                break;
+                                            }
+                                          },
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            ));
+                          },
+                                  childCount: _articles.length,
+                                  semanticIndexOffset: 1)),
+                        ),
+                ],
+              )
+            : Center(
+                child: Text("No articles have been created",
+                    style: TextStyle(color: Color(0xffaaaaaa), fontSize: 23)),
+              ));
   }
 }
 

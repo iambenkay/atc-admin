@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,10 +11,13 @@ class Auth with ChangeNotifier {
   FirebaseAuth _auth;
   FirebaseUser user;
   Firestore store;
+  FirebaseStorage bucket;
+
   Auth() {
     status = Status.Uninitialized;
     _auth = FirebaseAuth.instance;
     store = Firestore.instance;
+    bucket = FirebaseStorage.instance;
 
     _auth.onAuthStateChanged.listen(_authStateChanged);
   }
@@ -50,6 +54,4 @@ class Auth with ChangeNotifier {
 
 Auth firebase = Auth();
 
-Widget withFirebase(Consumer<Auth> w) {
-  return ChangeNotifierProvider.value(value: firebase, child: w);
-}
+Widget withFirebase(Consumer<Auth> w) => ChangeNotifierProvider.value(value: firebase, child: w);

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:atc_admin/Auth/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 
 class ArticleEditor extends StatefulWidget {
@@ -125,7 +124,7 @@ class _ArticleEditorState extends State<ArticleEditor>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text("Editor", style: GoogleFonts.lato(fontSize: 25)),
+        title: Text("Editor", style: TextStyle(fontSize: 25)),
         leading: InkWell(
           child: Icon(Icons.arrow_back),
           onTap: () async {
@@ -172,14 +171,14 @@ class _ArticleEditorState extends State<ArticleEditor>
                       Padding(
                         padding: const EdgeInsets.all(15),
                         child: Text(article["title"],
-                            style: GoogleFonts.lato(
+                            style: TextStyle(
                                 fontSize: 30, fontWeight: FontWeight.bold)),
                       ),
                       Padding(
                           padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
                           child: Text(
                             "Created on ${months[dateCreated.month - 1]} ${dateCreated.day}, ${dateCreated.year}",
-                            style: GoogleFonts.lato(
+                            style: TextStyle(
                               fontSize: 18,
                               fontStyle: FontStyle.italic,
                             ),
@@ -189,7 +188,7 @@ class _ArticleEditorState extends State<ArticleEditor>
                   TextField(
                     maxLines: null,
                     autocorrect: true,
-                    style: GoogleFonts.lato(fontSize: 20),
+                    style: TextStyle(fontSize: 20),
                     decoration: InputDecoration(
                       hintText: "Start writing...",
                       border: OutlineInputBorder(

@@ -1,23 +1,21 @@
 import 'dart:async';
 
 import 'package:atc_admin/Auth/auth.dart';
-import 'package:atc_admin/Screens/ArticleEditor.dart';
+import 'package:atc_admin/services/asset-provider.dart';
 import 'package:flutter/material.dart';
 
 class Processing extends StatefulWidget {
   final Auth auth;
-  final Map<String, dynamic> data;
-  Processing(this.auth, this.data);
+  final Future<Widget> Function() onSave;
+  Processing(this.auth, this.onSave);
   @override
-  _ProcessingState createState() => _ProcessingState(auth, data);
+  _ProcessingState createState() => _ProcessingState();
 }
 
 class _ProcessingState extends State<Processing> {
-  Auth auth;
-  
-  Map<String, dynamic> data;
   bool _saved = false;
-  _ProcessingState(this.auth, this.data);
+  Widget next;
+  _ProcessingState();
   @override
   void initState() {
     super.initState();
@@ -25,10 +23,7 @@ class _ProcessingState extends State<Processing> {
   }
 
   void save() async {
-    data["id"] = await auth.store.collection("article").add({
-      "title": data["title"],
-      "createdAt": data["createdAt"],
-    }).then((ref) => ref.documentID);
+    next = await widget.onSave();
     setState(() {
       _saved = true;
     });
@@ -38,19 +33,29 @@ class _ProcessingState extends State<Processing> {
   Widget build(BuildContext context) {
     if (_saved) {
       Timer(Duration(seconds: 1), () {
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => ArticleEditor(data["id"], auth)));
+        if (next != null) {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => next));
+        } else
+          Navigator.of(context).pop();
       });
     }
-    return Scaffold(
-      body: Center(
-          child: !_saved
-              ? CircularProgressIndicator()
-              : Icon(
-                  Icons.check,
-                  size: 80,
-                  color: Color(0xff008800),
-                )),
+    return WillPopScope(
+      onWillPop: () {
+        super.dispose();
+        return Future.value(true);
+      },
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(
+              child: !_saved
+                  ? CircularProgressIndicator()
+                  : Image.asset(
+                      AssetProvider.success_check,
+                      cacheHeight: 50,
+                      cacheWidth: 50,
+                      scale: 0.2,
+                    ))),
     );
   }
 }
